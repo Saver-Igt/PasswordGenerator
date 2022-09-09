@@ -6,20 +6,15 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import Generator.*;
 
-public class MainWindow {
-	private JFrame window;
-	private JPanel mainPanel;
+public class MainWindow extends Window{
+	
 	private JTextField passwordField;
 	private JTextField sizeField;
-	public MainWindow(String title) {
-		window = new JFrame(title);
-		window.setBounds(500,150,320,250);
-		window.setResizable(false);
+	
+	public MainWindow(String title, int x, int y, int width, int height, int closeOperation) {
+		super(title, x, y, width, height, closeOperation);	
 	}
 	public void createMainPanel() {
-		mainPanel = new JPanel();
-		mainPanel.setLayout(null);
-
 		JLabel label1 = new JLabel("Введите количество знаков: "); 				
 		label1.setBounds(5,10,170,25);
 		mainPanel.add(label1);
@@ -45,8 +40,16 @@ public class MainWindow {
 		buttonCopy.setBounds(210,130,102,25);
 		mainPanel.add(buttonCopy);
 		buttonCopy.addActionListener(event->copy());
-
-		window.add(mainPanel);
+		
+		JButton buttonExit = new JButton("Выйти");
+		buttonExit.setBounds(210,170,102,25);
+		mainPanel.add(buttonExit);
+		buttonExit.addActionListener(event->closeWindow());
+		
+		JButton buttonCreateDBWindow = new JButton("Открыть Базу Данных");
+		buttonCreateDBWindow.setBounds(5,170,175,25);
+		mainPanel.add(buttonCreateDBWindow);
+		buttonCreateDBWindow.addActionListener(event->createDBWindow());
 	}
 	public void copy() {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -66,20 +69,30 @@ public class MainWindow {
 			}
 		}
 	}
+	public void createDBWindow() {
+		DataBaseWindow gui = new DataBaseWindow("База данных",1500,150,320,250,2);
+	    gui.createMenu();
+	}
+	public void closeWindow() {
+		int exit = JOptionPane.showConfirmDialog(null, "Вы действительно хотите выйти?", "Завершение работы", 
+				   JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		if (JOptionPane.YES_OPTION==exit) {
+			System.exit(1);
+		}
+	}
 	public void createMenu() {
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu menuMain = new JMenu("Главная");
-		JMenuItem menu1 = new JMenuItem("Информация о команде");
+		JMenuItem menu1 = new JMenuItem("База данных");
 		JMenuItem menu2 = new JMenuItem("Выход");
 		menuMain.add(menu1);
 		menuMain.add(menu2);
 		
+		menu1.addActionListener(event->getPassword());
+		menu2.addActionListener(event->closeWindow());
+		
 		menuBar.add(menuMain);
-		window.setJMenuBar(menuBar);
-	}
-	public void setMainWindowVisible() {
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setVisible(true);
+		mainFrame.setJMenuBar(menuBar);
 	}
 }
